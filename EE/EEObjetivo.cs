@@ -15,12 +15,15 @@ namespace EE
         [DisplayName("% de Acierto")]
         public int ProbabilidadAcierto { get; set; }
 
-        public EEObjetivo(int id, string nombre, int distancia, int probabilidadDeHit)
+        public bool Activo { get; set; }
+
+        public EEObjetivo(int id, string nombre, int distancia, int probabilidadDeHit, bool activo)
         {
             Id = id;
             Nombre = nombre;
             Distancia = distancia;
             ProbabilidadAcierto = probabilidadDeHit;
+            Activo = activo;
         }
 
     }

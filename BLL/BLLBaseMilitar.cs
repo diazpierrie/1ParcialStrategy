@@ -5,12 +5,15 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using EE;
+using MPP;
 
 namespace BLL
 {
     public class BLLBaseMilitar
     {
-        private Random _rand;
+        private Random _rand = new Random();
+        private MPPObjetivo _mppObjetivo = new MPPObjetivo();
+        private MPPLogDisparo _mppLogDisparo = new MPPLogDisparo();
         public void DeterminarArma(int rowIndex, EEBaseMilitar baseMilitar, List<EEArma> estrategiasDisparo, BindingList<EEObjetivo> objetivos)
         {
             if (rowIndex == -1)
@@ -35,15 +38,21 @@ namespace BLL
 
         }
 
-        public void DispararArma(EEObjetivo objetivo)
+        public bool DispararArma(EEObjetivo objetivo, EEArma arma)
         {
-            if (_rand.Next(1, 99) < objetivo.ProbabilidadAcierto)
+            if (_rand.Next(1, 100) <= objetivo.ProbabilidadAcierto)
             {
-                MessageBox.Show(@"El enemigo fue destruido");
+                _mppObjetivo.BajaObjetivo(objetivo);
+                EELogDisparo oLogDisparo = new EELogDisparo(0, objetivo.Id, arma.ToString(), true);
+                _mppLogDisparo.Alta_LogDisparo(oLogDisparo);
+
+                return true;
             }
             else
             {
-                MessageBox.Show(@"El disparo ha errado");
+                EELogDisparo oLogDisparo = new EELogDisparo(0, objetivo.Id, arma.ToString(), false);
+                _mppLogDisparo.Alta_LogDisparo(oLogDisparo);
+                return false;
             }
         }
     }

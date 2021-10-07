@@ -4,36 +4,70 @@ using System.Collections;
 using System.Data.SqlClient;
 
 namespace DAL
+{
+    public class Acceso
     {
-        public class Acceso
+        private SqlConnection con = new();
+        private SqlTransaction transaction;
+        private SqlCommand cmd;
+
+        public void Abrir()
         {
-            private SqlConnection con = new(@"Data Source=.\SQLEXPRESS;Initial Catalog=PrimerParcial;Integrated Security=True");
-            private SqlTransaction transaction;
-            private SqlCommand cmd;
+            con = new SqlConnection();
+            con.ConnectionString = @"Data Source=.\SQLEXPRESS;Initial Catalog=PrimerParcial;Integrated Security=True";
+            con.Open();
+        }
 
-            public void Abrir()
+        public void Cerrar()
+        {
+            con.Close();
+            con.Dispose();
+            con = null;
+            GC.Collect();
+        }
+
+        public DataSet Leer(string consulta, Hashtable Hdatos)
+        {
+            Abrir();
+
+            DataSet ds = new DataSet();
+            cmd = new SqlCommand();
+
+            cmd.Connection = con;
+            cmd.CommandText = consulta;
+            cmd.CommandType = CommandType.StoredProcedure;
+
+
+            if (Hdatos != null)
             {
-                con = new SqlConnection();
-                con.Open();
+                foreach (string d in Hdatos.Keys)
+                {
+                    cmd.Parameters.AddWithValue(d, Hdatos[d]);
+                }
+
+
             }
+            SqlDataAdapter Adapter = new SqlDataAdapter(cmd);
+            Adapter.Fill(ds);
 
-            public void Cerrar()
-            {
-                con.Close();
-                con.Dispose();
-                con = null;
-                GC.Collect();
-            }
+            Cerrar();
 
-            public DataSet Leer(string consulta, Hashtable Hdatos)
+            return ds;
+
+        }
+
+        public bool Escribir(string Consulta, Hashtable Hdatos)
+        {
+            Abrir();
+
+            try
             {
-                DataSet ds = new DataSet();
+                transaction = con.BeginTransaction();
                 cmd = new SqlCommand();
-
                 cmd.Connection = con;
-                cmd.CommandText = consulta;
+                cmd.CommandText = Consulta;
                 cmd.CommandType = CommandType.StoredProcedure;
-
+                cmd.Transaction = transaction;
 
                 if (Hdatos != null)
                 {
@@ -41,52 +75,23 @@ namespace DAL
                     {
                         cmd.Parameters.AddWithValue(d, Hdatos[d]);
                     }
-
-
                 }
-                SqlDataAdapter Adapter = new SqlDataAdapter(cmd);
-                Adapter.Fill(ds);
 
-                return ds;
+                int a = cmd.ExecuteNonQuery();
+                transaction.Commit();
+                return true;
+
 
             }
-
-            public bool Escribir(string Consulta, Hashtable Hdatos)
+            catch
             {
-                Abrir();
-
-                try
-                {
-                    transaction = con.BeginTransaction();
-                    cmd = new SqlCommand();
-                    cmd.Connection = con;
-                    cmd.CommandText = Consulta;
-                    cmd.CommandType = CommandType.StoredProcedure;
-                    cmd.Transaction = transaction;
-
-                    if (Hdatos != null)
-                    {
-                        foreach (string d in Hdatos.Keys)
-                        {
-                            cmd.Parameters.AddWithValue(d, Hdatos[d]);
-                        }
-                    }
-
-                    int a = cmd.ExecuteNonQuery();
-                    transaction.Commit();
-                    return true;
-
-
-                }
-                catch
-                {
-                    transaction.Rollback();
-                    return false;
-                }
-                finally
-                {
-                    Cerrar();
-                }
+                transaction.Rollback();
+                return false;
+            }
+            finally
+            {
+                Cerrar();
             }
         }
     }
+}

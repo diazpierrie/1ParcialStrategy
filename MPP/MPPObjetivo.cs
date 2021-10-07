@@ -2,12 +2,9 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Data;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using DAL;
-using EE;
 
 namespace MPP
 {
@@ -23,6 +20,7 @@ namespace MPP
             Hdatos.Add("@Nombre", objetivo.Nombre);
             Hdatos.Add("@Distancia", objetivo.Distancia);
             Hdatos.Add("@ProbabilidadAcierto", objetivo.ProbabilidadAcierto);
+            Hdatos.Add("@Activo", objetivo.Activo);
 
             Resultado = Datos.Escribir(consulta, Hdatos);
             return Resultado;
@@ -33,17 +31,17 @@ namespace MPP
             Acceso Datos = new Acceso();
             Hashtable Hdatos = new Hashtable();
             bool Resultado;
-            Hdatos.Add("@Cod_Objetivo", objetivo.Id);
+            Hdatos.Add("@Id", objetivo.Id);
             string consulta = "SP_Objetivo_Baja";
             return Resultado = Datos.Escribir(consulta, Hdatos);
         }
 
-        public List<EEObjetivo> ListarObjetivo()
+        public BindingList<EEObjetivo> ListarObjetivo()
         {
             Acceso Datos = new Acceso();
             DataSet ds = new DataSet();
 
-            List<EEObjetivo> LObjetivos = new List<EEObjetivo>();
+            BindingList<EEObjetivo> LObjetivos = new BindingList<EEObjetivo>();
 
             ds = Datos.Leer("SP_Objetivo_Leer", null);
 
@@ -54,15 +52,14 @@ namespace MPP
                 {
                     eObjetivo = new(
                         Convert.ToInt16(fila["Id"]),
-                        fila["Nombre"]
-                            .ToString(),
+                        fila["Nombre"].ToString(),
                         Convert.ToInt16(fila["Distancia"]),
-                        Convert.ToInt16(fila["ProbabilidadAcierto"]));
+                        Convert.ToInt16(fila["ProbabilidadAcierto"]),
+                        Convert.ToBoolean(fila["Activo"]));
                     LObjetivos.Add(eObjetivo);
 
                 }
             }
-
             return LObjetivos;
         }
     }

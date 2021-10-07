@@ -6,10 +6,23 @@ using System.Threading.Tasks;
 
 namespace EE
 {
-    public class LogDisparo
+    public class EELogDisparo
     {
-        public EEObjetivo Objetivo{ get; set; }
-        public EEArma Arma { get; set; }
+        public EELogDisparo(int id, int id_Objetivo, string arma, bool fueAcierto)
+        {
+            Id = id;
+            Id_Objetivo = id_Objetivo;
+            Arma = arma;
+            FueAcierto = fueAcierto;
+        }
+
+        public int Id { get; set; }
+        public int Id_Objetivo { get; set; }
+        public string Arma { get; set; }
         public bool FueAcierto { get; set; }
+
+
+        
+
     }
 }
