@@ -86,7 +86,7 @@ namespace UI
             // 
             this.labelBienvenida.Location = new System.Drawing.Point(12, 9);
             this.labelBienvenida.Name = "labelBienvenida";
-            this.labelBienvenida.Size = new System.Drawing.Size(376, 31);
+            this.labelBienvenida.Size = new System.Drawing.Size(497, 31);
             this.labelBienvenida.TabIndex = 4;
             this.labelBienvenida.Text = "Bienvenido, presione el boton \"Usar Radar\" para detectar los objetivos dentro de " +
     "200 Km";

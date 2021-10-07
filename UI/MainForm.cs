@@ -32,23 +32,39 @@ namespace UI
             ObjetivosDataGrid.Columns["Id"].Visible = false;
             ObjetivosDataGrid.Columns["Activo"].Visible = false;
             labelArma.Hide();
+            DeteccionLabel.Hide();
         }
 
         private void RadarBtn_Click(object sender, System.EventArgs e)
         {
             RefrescarTabla();
             _bllBaseMilitar.DeterminarArma(ObjetivosDataGrid.CurrentCell.RowIndex, _baseMilitar, _estrategiasDisparo, _objetivos);
+            labelBienvenida.Hide();
             labelArma.Show();
             labelArma.Text = $@"El arma recomendada a esa distancia es el {_baseMilitar.RetornarEstrategia()}";
         }
 
         private void RefrescarTabla()
         {
+            var objetivosAntesDeRefresh = _objetivos.Count;
             _objetivos = new BindingList<EEObjetivo>();
-            foreach (var objetivo in _bllObjetivo.EscanearObjetivos())
+            foreach (var objetivo in _bllObjetivo.EscanearObjetivos()) //Agrega Objetivos
             {
                 _objetivos.Add(objetivo);
             }
+            var objetivosDespuesDeRefresh = _objetivos.Count;
+            DeteccionLabel.Show();
+            if (objetivosDespuesDeRefresh - objetivosAntesDeRefresh == 1)
+            {
+                DeteccionLabel.Text =
+                    @$"¡Se ha detectado un nuevo objetivo!";
+            }
+            else
+            {
+                DeteccionLabel.Text =
+                    @$"¡Se han detectado {objetivosDespuesDeRefresh - objetivosAntesDeRefresh} nuevos objetivos!";
+            }
+
             ObjetivosDataGrid.DataSource = _objetivos;
         }
 
