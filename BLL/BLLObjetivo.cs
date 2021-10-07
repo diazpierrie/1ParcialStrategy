@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.ComponentModel;
 using EE;
 using MPP;
@@ -10,7 +9,6 @@ namespace BLL
     {
         private Random _rand = new Random();
         private MPPObjetivo _mppObjetivo = new MPPObjetivo();
-        private List<EEObjetivo> _objetivos = new List<EEObjetivo>();
         private string[] _nombres =
         {
             "El rombo de Evangelion",
@@ -38,12 +36,6 @@ namespace BLL
             }
 
             return _mppObjetivo.ListarObjetivo();
-        }
-
-        public void DispararObjetivo(BindingList<EEObjetivo> objetivos)
-        {
-            var cantidadObjetivos = _rand.Next(1, 4);
-
         }
     }
 }
